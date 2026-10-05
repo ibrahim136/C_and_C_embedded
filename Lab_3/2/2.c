@@ -71,8 +71,8 @@ void Define_Integer(int* n, char arr[])
 			check = 1;
 			scanf("%*[^\n]"); //% type specifier /  * disacard / [^\n] read except new line
 		}
-		else if (temp < 0) {
-			printf("You have entered a negative input... please try again a positive integer input\n\n");
+		else if (temp < 1) {
+			printf("You have entered non-positive input... please try again a positive integer input\n\n");
 			check = 1;
 			scanf("%*[^\n]"); //% type specifier /  * disacard / [^\n] read except new line
 		}

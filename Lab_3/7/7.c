@@ -10,21 +10,30 @@ void Define_Float(float* n, int i);
 
 void Define_array(float* arr, int n);
 
-void print_array_reverse(float* arr, int n);
+void sort_array(float* arr, int n);
+
+void print_array(float* arr, int n);
 
 int main() {
-	printf("This program is reversing the given array\n\n");
+	printf("This program sorts the elements of an array in ascending order.\n\n");
 	int n;
 	Define_Integer(&n,"the size of array");
-	float* arr = (float*)malloc(n * sizeof(float));
+	float* arr = (float*)malloc(n* sizeof(float));
 	if (!arr) {
-	printf("\nArray hasn't allocated... please try again later\n");
-	return -1;
+		printf("\nArray hasn't allocated... please try again later\n");
+		return 0;
 	}
 	Define_array(arr,n);
-	print_array_reverse(arr, n);
 	
+	printf("Array before sorting: \n");
+	print_array(arr,n);
+
+	sort_array(arr, n);
+	printf("Array after sorting: \n");
+	print_array(arr, n);
+
 	free(arr);
+	
 }
 
 char is_integer(float* temp)
@@ -62,6 +71,7 @@ void Define_Integer(int* n, char arr[])
 			check = 0;
 		}
 	}
+	printf("\n\n");
 }
 
 void Define_Float(float* n, int i) {
@@ -90,15 +100,42 @@ void Define_array(float* arr,int n) {
 	{
 		Define_Float(&arr[i], i);
 	}
+	printf("\n\n");
 }
 
-void print_array_reverse(float* arr, int n) {
-	int i;
-	printf("\n\n");
-	for (i = n - 1; i >= 0; i--)
+void sort_array(float* arr, int n)
+{
+	int i, j;
+	for (i = 0; i < n; i++)
 	{
+		char swap = 0;
+		for (j = 0; j < n - i -1; j++)
+		{
+			if (arr[j] > arr[j + 1])
+			{
+				swap = 1;
+				float temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+		}
+		if (!swap)
+		{
+			break;
+		}
+	}
+}
 
-		printf("%.2f  ", arr[i]);
+void print_array(float* arr, int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		printf("%.2f ", arr[i]);
 	}
 	printf("\n\n");
 }
+
+
+
+
