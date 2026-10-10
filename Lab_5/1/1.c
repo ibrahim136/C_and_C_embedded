@@ -159,38 +159,10 @@ char* enter_name()
 }
 
 char is_valid_name_check(char x) {
-	switch (x) {
-	case '\t':
-	case ',':
-	case '.':
-	case ';':
-	case ':':
-	case '!':
-	case '?':
-	case '_':
-	case '-':
-	case '\'':
-	case '{':
-	case '}':
-	case '[':
-	case ']':
-	case '(':
-	case ')':
-	case '\\':
-	case '/':
-	case '0':
-	case '1':
-	case '2':
-	case '3':
-	case '4':
-	case '5':
-	case '6':
-	case '7':
-	case '8':
-	case '9':
-		return 0;
-	default:
+	if(x >= 'a' && x <='z' || x >='A' && x <='Z')
 		return 1;
+	else{
+		return 0;
 	}
 }
 
