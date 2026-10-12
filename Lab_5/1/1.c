@@ -159,7 +159,7 @@ char* enter_name()
 }
 
 char is_valid_name_check(char x) {
-	if(x >= 'a' && x <='z' || x >='A' && x <='Z')
+	if(x >= 'a' && x <='z' || x >='A' && x <='Z' || x==' ')
 		return 1;
 	else{
 		return 0;
