@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 typedef struct Complex {
-	int real;
-	int img;
+	double real;
+	double img;
 }complex;
 
 char is_integer(float* temp);
@@ -23,7 +23,7 @@ char is_plus_or_minus(char x);
 char is_i(char x);
 char is_negative(char x);
 
-int set_number_with_sign(int temp, char sign);
+double set_number_with_sign(double temp, char sign);
 char* remove_spaces(char* s);
 
 complex read_complex(int i);
@@ -33,8 +33,8 @@ void print(complex* c_no_s, int count);
 
 int main(void) {
 	int count;
-	complex * c_no_s = reading_n_complex(&count);
-	print(c_no_s,count);
+	complex* c_no_s = reading_n_complex(&count);
+	print(c_no_s, count);
 	print_add(c_no_s, count);
 	print_multi(c_no_s, count);
 	free(c_no_s);
@@ -84,7 +84,7 @@ char* enter_string(int i) {
 }
 
 char is_valid_expression_check(char character) {
-	if (is_number(character) || is_plus_or_minus(character) || is_i(character) || character == ' ') {
+	if (is_number(character) || is_plus_or_minus(character) || is_i(character) || character == ' ' || character == '.') {
 		return 1;
 	}
 	else {
@@ -92,7 +92,7 @@ char is_valid_expression_check(char character) {
 	}
 }
 
-int set_number_with_sign(int temp, char sign) {
+double set_number_with_sign(double temp, char sign) {
 	if (sign == 1) {
 		return -1 * temp;
 	}
@@ -101,23 +101,34 @@ int set_number_with_sign(int temp, char sign) {
 
 complex get_complex_from_string(char* string) {
 	int i = 0;
-	int temp = 0;
+	double temp = 0;
 	complex c_no = { 0,0 };
 	char is_real = 1;
+	char in_decimal = 0;
+	double dec_div = 1.0;
 	char* string_no_spaces = remove_spaces(string);
 	string = string_no_spaces;
 	if (!string) {
 		return c_no;
 	}
-	char nu_check=0;
+	char nu_check = 0;
 	char is_negative_flag = is_negative(string[i]);
 	while (string[i] != '\0') {
-		
+
 		if (is_plus_or_minus(string[i])) {
 			is_negative_flag = is_negative(string[i]);
 		}
+		else if (string[i] == '.') { 
+			in_decimal = 1;
+		}
 		else if (string[i] != 'i') {
-			temp = temp * 10 + string[i] - '0';
+			if (in_decimal) {
+				dec_div *= 10.0;
+				temp = temp + (string[i] - '0') / dec_div;
+			}
+			else {
+				temp = temp * 10 + (string[i] - '0');
+			}
 			nu_check = 1;
 		}
 		if (string[i] == 'i') {
@@ -126,19 +137,21 @@ complex get_complex_from_string(char* string) {
 				temp = 1;
 			}
 		}
-		if (is_plus_or_minus(string[i + 1]) || string[i+1] == '\0') {
+		if (is_plus_or_minus(string[i + 1]) || string[i + 1] == '\0') {
 			if (is_real) {
-				c_no.real += set_number_with_sign(temp,is_negative_flag);
+				c_no.real += set_number_with_sign(temp, is_negative_flag);
 				temp = 0;
 				nu_check = 0;
 			}
 			else {
 				c_no.img += set_number_with_sign(temp, is_negative_flag);
-				temp = 0;
-				nu_check = 0;
 				is_real = 1;
+				
 			}
-
+			temp = 0;
+			nu_check = 0;
+			in_decimal = 0;
+			dec_div = 1.0;
 		}
 		i++;
 	}
@@ -221,8 +234,8 @@ complex read_complex(int i) {
 	return ret;
 }
 
-complex* reading_n_complex(int * i) {
-	Define_Integer(i,"Enter the number of Complex numbers will be entered: ");
+complex* reading_n_complex(int* i) {
+	Define_Integer(i, "Enter the number of Complex numbers will be entered: ");
 	complex* c_no_s = (complex*)malloc(*i * sizeof(complex));
 	if (!c_no_s) {
 		printf("Complex numbers have not been allocated");
@@ -231,7 +244,7 @@ complex* reading_n_complex(int * i) {
 	int j;
 	for (j = 0; j < *i; j++)
 	{
-		c_no_s[j] = read_complex(j+1);
+		c_no_s[j] = read_complex(j + 1);
 	}
 	return c_no_s;
 }
@@ -244,44 +257,44 @@ void print(complex* c_no_s, int count)
 		if (c_no_s[i].real && c_no_s[i].img) {
 			if (c_no_s[i].img > 0) {
 				if (c_no_s[i].img == 1) {
-					printf("Complex no. %i = %i + i", i+1, c_no_s[i].real);
+					printf("Complex no. %i = %.2lf + i", i + 1, c_no_s[i].real);
 				}
 				else {
-					printf("Complex no. %i = %i + %i i", i+1, c_no_s[i].real, c_no_s[i].img);
+					printf("Complex no. %i = %.2lf + %.2lf i", i + 1, c_no_s[i].real, c_no_s[i].img);
 				}
 			}
 			else {
 				if (c_no_s[i].img == -1) {
-					printf("Complex no. %i = %i - i", i+1, c_no_s[i].real);
+					printf("Complex no. %i = %.2lf - i", i + 1, c_no_s[i].real);
 				}
 				else {
-					printf("Complex no. %i = %i - %i i", i+1, c_no_s[i].real, c_no_s[i].img*-1);
+					printf("Complex no. %i = %.2lf - %.2lf i", i + 1, c_no_s[i].real, c_no_s[i].img * -1);
 				}
 			}
 		}
 		else if (c_no_s[i].real) {
-			printf("Complex no. %i = %i", i+1, c_no_s[i].real);
+			printf("Complex no. %i = %.2lf", i + 1, c_no_s[i].real);
 		}
 		else if (c_no_s[i].img) {
 			if (c_no_s[i].img > 0) {
 				if (c_no_s[i].img == 1) {
-					printf("Complex no. %i = i", i+1);
+					printf("Complex no. %i = i", i + 1);
 				}
 				else {
-					printf("Complex no. %i = %i i", i+1,c_no_s[i].img);
+					printf("Complex no. %i = %.2lf i", i + 1, c_no_s[i].img);
 				}
 			}
 			else {
 				if (c_no_s[i].img == -1) {
-					printf("Complex no. %i = -i", i+1);
+					printf("Complex no. %i = -i", i + 1);
 				}
 				else {
-					printf("Complex no. %i = %i i", i+1, c_no_s[i].img);
+					printf("Complex no. %i = %.2lf i", i + 1, c_no_s[i].img);
 				}
 			}
 		}
 		else {
-			printf("Complex no. %i = 0",i+1);
+			printf("Complex no. %i = 0", i + 1);
 		}
 		printf("\n");
 	}
@@ -300,26 +313,26 @@ void print_add(complex* c_no_s, int count)
 	if (c.real && c.img) {
 		if (c.img > 0) {
 			if (c.img == 1) {
-				printf("%i + i", c.real);
+				printf("%.2lf + i", c.real);
 			}
 			else {
-				printf("%i + %i i", c.real, c.img);
+				printf("%.2lf + %.2lf i", c.real, c.img);
 			}
 		}
 		else {
 			if (c.img == -1) {
-				printf("%i - i", c.real);
+				printf("%.2lf - i", c.real);
 			}
 			else {
-				printf("%i - %i i", c.real, c.img*-1);
+				printf("%.2lf - %.2lf i", c.real, c.img * -1);
 			}
 		}
 	}
 	else if (c.real) {
-		printf("%i", c.real);
+		printf("%.2lf", c.real);
 	}
 	else if (c.img) {
-		printf("%i i", c.img);
+		printf("%.2lf i", c.img);
 	}
 	else {
 		printf("0");
@@ -361,7 +374,7 @@ void print_multi(complex* c_no_s, int count)
 	complex c = { 1,0 };
 	for (i = 0; i < count; i++)
 	{
-		int temp = c.real;
+		double temp = c.real;
 		c.real = (c.real * c_no_s[i].real) - (c.img * c_no_s[i].img);
 		c.img = (temp * c_no_s[i].img) + (c.img * c_no_s[i].real);
 	}
@@ -369,26 +382,26 @@ void print_multi(complex* c_no_s, int count)
 	if (c.real && c.img) {
 		if (c.img > 0) {
 			if (c.img == 1) {
-				printf("%i + i", c.real);
+				printf("%.2lf + i", c.real);
 			}
 			else {
-				printf("%i + %i i", c.real, c.img);
+				printf("%.2lf + %.2lf i", c.real, c.img);
 			}
 		}
 		else {
 			if (c.img == -1) {
-				printf("%i - i", c.real);
+				printf("%.2lf - i", c.real);
 			}
 			else {
-				printf("%i - %i i", c.real, c.img*-1);
+				printf("%.2lf - %.2lf i", c.real, c.img * -1);
 			}
 		}
 	}
 	else if (c.real) {
-		printf("%i", c.real);
+		printf("%.2lf", c.real);
 	}
 	else if (c.img) {
-		printf("%i i", c.img);
+		printf("%.2lf i", c.img);
 	}
 	else {
 		printf("0");
